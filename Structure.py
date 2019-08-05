@@ -25,7 +25,9 @@ class Structure:
                 newAttribute = Attribute.Numeric(name)
             elif tokens[2][0] == '{' and last_token[len(last_token)-1] == '}':
                 categoriesLine = line.split('{')[1].split('}')[0]
-                categories = categoriesLine.split(',')
+                categories = []
+                for x in categoriesLine.split(','):
+                    categories.append(Attribute.Value(x))
                 if len(categories) < 2:
                     raise Exception("Each categorical attribute must have at least 2 categories")
                 newAttribute = Attribute.Category(name,categories)
@@ -38,5 +40,5 @@ class Structure:
                     raise Exception("There can not be more than 1 class attribute")
                 self.classAttribute = newAttribute
 
-x = Structure("testStructure.txt")
-y = 5
+#x = Structure("testStructure.txt")
+#y = 5

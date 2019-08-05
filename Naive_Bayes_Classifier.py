@@ -1,8 +1,6 @@
-# Hi Steven
-#fuck off
-
-def calculateMestimate(m,p,nc,n):
+def calculateMestimate(p,nc,n):
+    m = 2  # constant in this program
     numerator = nc + m*p
     denominator = n + m
-    mestimate = numerator/denominator
+    mestimate = float(numerator)/denominator
     return mestimate
