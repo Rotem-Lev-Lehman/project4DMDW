@@ -49,7 +49,6 @@ def check_if_all_needed_files_exists():
     global train_file_name
     global test_file_name
 
-    print 'checking'
     if directory_path:
         if os.path.isdir(directory_path):
             # check if the directory contains Structure.txt, train.csv, test.csv
@@ -96,11 +95,19 @@ def build():
     # build the model
     global model
     global structure
-    print 'building'
+    global directory_path
+    global structure_file_name
+    global train_file_name
+
     classifyBtn.config(state="disabled")
     try:
-        structure = Structure.Structure('structure_path')
-        model = Model.Model('train.csv', structure=structure, binsNum=binsNum)
+        bins = discretization_bins_var.get()
+        binsNum = int(bins)
+        structure_path = os.path.join(directory_path, structure_file_name)
+        train_path = os.path.join(directory_path, train_file_name)
+
+        structure = Structure.Structure(structure_path)
+        model = Model.Model(train_path, structure=structure, binsNum=binsNum)
 
         print 'done building the model'
         classifyBtn.config(state="normal")
@@ -111,9 +118,15 @@ def build():
 def classify():
     # classify the test file
     global model
-    print 'classifying'
-    output_path = pick_output_path()
-    model.classify('test_file.csv', output_path)
+    global directory_path
+    global test_file_name
+    global output_file_name
+
+    output_path = os.path.join(directory_path, output_file_name)
+    test_path = os.path.join(directory_path, test_file_name)
+
+    model.classify(test_path, output_path)
+    print 'Done classifying!'
 
 
 model = None
@@ -123,6 +136,7 @@ directory_path = None
 structure_file_name = 'Structure.txt'
 train_file_name = 'train.csv'
 test_file_name = 'test.csv'
+output_file_name = 'output.txt'
 
 buildBtn = Button(root, text="Build", width = 6, command = build, state="disabled")
 buildBtn.grid(row = 7, column = 1, sticky = W)
