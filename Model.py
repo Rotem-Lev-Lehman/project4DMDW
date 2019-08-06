@@ -95,16 +95,16 @@ class Model:
         for classification in self.structure.classAttribute.categories:
             results[classification.name] = float(classification.appNum)/self.numberOfRows
         for i in range(len(details)-1):
+            if isinstance(self.structure.attributes[i], Attribute.Numeric):
+                details[i] = self.structure.attributes[i].get_bin_number(float(details[i]))
             for value in self.structure.attributes[i].categories:
-                if isinstance(self.structure.attributes[i], Attribute.Numeric):
-                    details[i] = self.structure.attributes[i].get_bin_number(int(details[i]))
                 if value.name == details[i]:
                     realDetails.append(value)
         for i in range(len(realDetails) - 1):
             value = realDetails[i]
             for classification in self.structure.classAttribute.categories:
                 nc = value.classQuantity[classification.name]
-                p = 1 / len(self.structure.attributes[i].categories)
+                p = float(1) / len(self.structure.attributes[i].categories)
                 n = value.appNum
                 grade = Naive_Bayes_Classifier.calculateMestimate(p,nc,n)
                 results[classification.name] *= grade
