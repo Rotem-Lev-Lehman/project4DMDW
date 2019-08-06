@@ -1,7 +1,6 @@
 import pandas
 import Structure
 import Attribute
-import csv
 import Naive_Bayes_Classifier
 
 
@@ -71,25 +70,24 @@ class Model:
             classification.setAppNum(self.columns[self.structure.classAttribute.name].count(classification.name))
 
     def classify(self, test_filename, outputPath):
-        with open(outputPath, mode='w') as csv_out_file:
-            csv_writer = csv.writer(csv_out_file, delimiter=' ')
+        with open(outputPath, mode='w') as out_file:
             record_num = 1
-            with open(test_filename) as csv_file:
-                csv_reader = csv.reader(csv_file, delimiter=',')
-                line_count = 0
-                for row in csv_reader:
-                    if len(row) != len(self.structure.attributes) + 1:
-                        raise Exception("The attributes in file: '" + str(test_filename) + "', must consist to the structure file. (Error in line number " + str(line_count) + ")")
-                    if line_count == 0:
-                        self.checkFirstRow(row,test_filename)
+            lines = [line.rstrip('\n') for line in open(test_filename)]  # read all lines from test file
+            line_count = 0
+            for line in lines:
+                row = line.split(',')
+                if len(row) != len(self.structure.attributes) + 1:
+                    raise Exception("The attributes in file: '" + str(test_filename) + "', must consist to the structure file. (Error in line number " + str(line_count) + ")")
+                if line_count == 0:
+                    self.checkFirstRow(row,test_filename)
+                else:
+                    if "" in row:
+                        classification = "Bad input!"
                     else:
-                        if "" in row:
-                            classification = "Bad input!"
-                        else:
-                            classification = self.getClassification(row)
-                        csv_writer.writerow([str(record_num), classification])
-                        record_num += 1
-                    line_count += 1
+                        classification = self.getClassification(row)
+                    out_file.write(str(record_num) + " " + classification + "\n")
+                    record_num += 1
+                line_count += 1
 
     def getClassification(self, details):
         realDetails = []
@@ -116,8 +114,8 @@ class Model:
             if results[classification.name] > max:
                 classMax = classification.name
                 max = results[classification.name]
-        print str(results['Y']) + " --- " + str(results['N'])
-        return classMax
+        return "P(Y) = " + str(results['Y']) + " , P(N) = " + str(results['N']) + " ==> class = " + str(classMax)
+        #return classMax
 
     def checkFirstRow(self, row,filename):
         # check the attributes line:
@@ -136,7 +134,7 @@ class Model:
 
 structure = Structure.Structure("Data/Structure.txt")
 df = Model("Data/train.csv", structure, 1)
-df.classify("Data/test.csv", 'Data/out.csv')
+df.classify("Data/test.csv", 'Data/out.txt')
 i = 0
 
 
