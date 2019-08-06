@@ -130,11 +130,3 @@ class Model:
                     raise Exception("The attribute: '" + str(row[i]) + "' in file: '" + str(
                         filename) + "', is expected to be named: '" + str(
                         self.structure.attributes[i].name) + "', as mentioned in the structure file")
-
-
-structure = Structure.Structure("Data/Structure.txt")
-df = Model("Data/train.csv", structure, 1)
-df.classify("Data/test.csv", 'Data/out.txt')
-i = 0
-
-

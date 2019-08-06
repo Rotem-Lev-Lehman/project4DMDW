@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
+import tkMessageBox
 import Model
 import Structure
 import os
@@ -23,6 +24,14 @@ def validate_bins(bins):
         except ValueError:
             return False
     return False
+
+
+def show_message(message):
+    tkMessageBox.showinfo(title="Naive Bayes Classifier", message=message)
+
+
+def show_error(error):
+    tkMessageBox.showerror(title="Naive Bayes Classifier", message=error)
 
 
 def enable_disable_build_button(*args):
@@ -76,7 +85,7 @@ def browse_directory_path():
         directoryPathInput.insert(END, directory_path)
         directoryPathInput.config(state="disabled")
     else:
-        print result
+        show_error(result)
 
 
 directoryPathBtn = Button(root, text="Browse", width = 6, command = browse_directory_path)
@@ -109,10 +118,10 @@ def build():
         structure = Structure.Structure(structure_path)
         model = Model.Model(train_path, structure=structure, binsNum=binsNum)
 
-        print 'done building the model'
+        show_message('Building classifier using train-set is done!')
         classifyBtn.config(state="normal")
     except Exception as err:
-        print err
+        show_error(err)
 
 
 def classify():
@@ -124,9 +133,12 @@ def classify():
 
     output_path = os.path.join(directory_path, output_file_name)
     test_path = os.path.join(directory_path, test_file_name)
-
-    model.classify(test_path, output_path)
-    print 'Done classifying!'
+    try:
+        model.classify(test_path, output_path)
+        show_message('Done classifying!')
+        root.destroy()  # exit program
+    except Exception as err:
+        show_error(err)
 
 
 model = None
