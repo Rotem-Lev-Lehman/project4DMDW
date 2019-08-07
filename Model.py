@@ -33,7 +33,7 @@ class Model:
             colDataFrame = data.iloc[1:,i]
             if isinstance(currAttribute, Attribute.Numeric):
                 colDataFrame = colDataFrame.apply(pandas.to_numeric)
-                colDataFrame = colDataFrame.fillna(colDataFrame.mean())
+                colDataFrame.fillna(colDataFrame.mean(), inplace=True)
                 col_min = colDataFrame.min()
                 col_max = colDataFrame.max()
                 col_bin_step = (col_max - col_min) / binsNum
@@ -45,7 +45,8 @@ class Model:
                     col[j] = currAttribute.get_bin_number(col[j])
 
             elif isinstance(currAttribute, Attribute.Category):
-                colDataFrame = colDataFrame.fillna(colDataFrame.max())
+                most_common = colDataFrame.mode(dropna=True)[0]
+                colDataFrame.fillna(most_common, inplace=True)
                 col = colDataFrame.tolist()
             else:
                 raise Exception("This is just weird...")
@@ -105,7 +106,8 @@ class Model:
             for classification in self.structure.classAttribute.categories:
                 nc = value.classQuantity[classification.name]
                 p = float(1) / len(self.structure.attributes[i].categories)
-                n = value.appNum
+                # n = value.appNum
+                n = classification.appNum
                 grade = Naive_Bayes_Classifier.calculateMestimate(p,nc,n)
                 results[classification.name] *= grade
         max = 0
@@ -114,8 +116,8 @@ class Model:
             if results[classification.name] > max:
                 classMax = classification.name
                 max = results[classification.name]
-        return "P(Y) = " + str(results['Y']) + " , P(N) = " + str(results['N']) + " ==> class = " + str(classMax)
-        #return classMax
+
+        return classMax
 
     def checkFirstRow(self, row,filename):
         # check the attributes line:
