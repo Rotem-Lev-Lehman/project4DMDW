@@ -1,5 +1,4 @@
 import pandas
-import Structure
 import Attribute
 import Naive_Bayes_Classifier
 
@@ -12,7 +11,7 @@ class Model:
         self.numberOfRows = None
         self.build_model(filename, binsNum)
 
-    def build_model(self, filename,binsNum):
+    def build_model(self, filename, binsNum):
         columns = []
         for att in self.structure.attributes:
             columns.append(att.name)

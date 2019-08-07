@@ -39,6 +39,3 @@ class Structure:
                 if self.classAttribute is not None:
                     raise Exception("There can not be more than 1 class attribute")
                 self.classAttribute = newAttribute
-
-#x = Structure("testStructure.txt")
-#y = 5
